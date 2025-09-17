@@ -46,19 +46,10 @@ public class TaskController {
             model.addAttribute("task", task);
             return "create-task";
         }
-        try {
-            taskService.createTask(task);
+           taskService.createTask(task);
             System.out.println("Task created successfully!");
             return "redirect:/tasks";
-        } catch (RuntimeException e) {
-            System.out.println("Error creating task: " + e.getMessage());
-            model.addAttribute("errorMessage", e.getMessage());
-            model.addAttribute("task", task);
-            return "create-task";
-        }
-
-
-    }
+           }
 
     @GetMapping("/update/{taskId}")
     public String updateTaskForm(@Parameter(description = "Id of the task to update")@PathVariable Long taskId, Model model) {

@@ -79,6 +79,15 @@ public class GlobalExceptionHandler {
             return new ResponseEntity<>("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @ExceptionHandler(NoSuchElementException.class)
+    public Object handleNoSuchElementException(NoSuchElementException ex, Model model) {
+        if (model != null) {
+            model.addAttribute("errorMessage", ex.getMessage());
+            return new ModelAndView("error-page");
+        } else {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
 
 }
