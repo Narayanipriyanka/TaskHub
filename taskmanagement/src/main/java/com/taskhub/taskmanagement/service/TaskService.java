@@ -43,7 +43,7 @@ public class TaskService {
         if (task == null || task.getTaskId() == null) {
             throw new InvalidTaskException("Task ID is required");
         }
-            Task existingTask = taskRepository.findById(task.getTaskId()).orElseThrow(() -> new NoSuchElementException("Task not found with ID " + task.getTaskId()));
+            Task existingTask = taskRepository.findById(task.getTaskId()).orElseThrow(() -> new TaskNotFoundException("Task not found with ID " + task.getTaskId()));
             existingTask.setTaskName(task.getTaskName());
             existingTask.setTaskDescription(task.getTaskDescription());
             existingTask.setProjectId(task.getProjectId());

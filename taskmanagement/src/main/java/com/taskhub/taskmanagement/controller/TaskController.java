@@ -47,7 +47,6 @@ public class TaskController {
             return "create-task";
         }
            taskService.createTask(task);
-            System.out.println("Task created successfully!");
             return "redirect:/tasks";
            }
 
@@ -62,13 +61,8 @@ public class TaskController {
         if (task == null|| task.getTaskName() == null) {
             return "redirect:/tasks"; // or return an error view
         }
-        try {
             taskService.updateTask(task);
             return "redirect:/tasks";
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return "update-task";
-        }
 
     }
     @Operation(summary = "delete a task")
