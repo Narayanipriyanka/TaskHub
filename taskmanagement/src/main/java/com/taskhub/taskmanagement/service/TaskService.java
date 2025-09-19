@@ -1,16 +1,20 @@
 package com.taskhub.taskmanagement.service;
 
+
 import com.taskhub.taskmanagement.entity.Task;
 import com.taskhub.taskmanagement.entity.TaskStatus;
 import com.taskhub.taskmanagement.exception.InvalidTaskException;
 import com.taskhub.taskmanagement.exception.TaskAlreadyExistsException;
 import com.taskhub.taskmanagement.exception.TaskNotFoundException;
 import com.taskhub.taskmanagement.repository.TaskRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
+import org.springframework.ui.Model;
+import java.util.HashMap;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
 
 @Service
 public class TaskService {
@@ -65,6 +69,34 @@ public class TaskService {
         }
         taskRepository.deleteById(taskId);
 
+    }
+    public Object getTasks(String query, HttpServletRequest request, Model model) {
+        List<Task> tasks;
+        if (query != null && !query.isEmpty()) {
+            tasks = searchTasks(query);
+        } else {
+            tasks = getAllTasks();
+        }
+
+        if (request.getHeader("Accept") != null && request.getHeader("Accept").contains("application/json")) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("tasks", tasks);
+            response.put("doneCount", tasks.stream().filter(task -> task.getStatus() == TaskStatus.DONE).count());
+            response.put("inProgressCount", tasks.stream().filter(task -> task.getStatus() == TaskStatus.IN_PROGRESS).count());
+            response.put("todoCount", tasks.stream().filter(task -> task.getStatus() == TaskStatus.TODO).count());
+            response.put("totalCount", tasks.size());
+            return ResponseEntity.ok(response);
+        } else {
+            model.addAttribute("tasks", tasks);
+            int doneCount = (int) tasks.stream().filter(task -> task.getStatus() == TaskStatus.DONE).count();
+            int inProgressCount = (int) tasks.stream().filter(task -> task.getStatus() == TaskStatus.IN_PROGRESS).count();
+            int todoCount = (int) tasks.stream().filter(task -> task.getStatus() == TaskStatus.TODO).count();
+            model.addAttribute("doneCount", doneCount);
+            model.addAttribute("inProgressCount", inProgressCount);
+            model.addAttribute("todoCount", todoCount);
+            model.addAttribute("totalCount", tasks.size());
+            return "tasks";
+        }
     }
 
     public List<Task> searchTasks(String query) {

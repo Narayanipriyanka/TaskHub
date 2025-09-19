@@ -2,6 +2,7 @@ package com.taskhub.taskmanagement.controller;
 
 import com.taskhub.taskmanagement.entity.TaskStatus;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
+
 import java.util.List;
 
 @Controller
@@ -47,7 +49,7 @@ public class TaskController {
             return "create-task";
         }
            taskService.createTask(task);
-            return "redirect:/tasks";
+        return "redirect:/tasks";
            }
 
     @GetMapping("/update/{taskId}")
@@ -57,7 +59,11 @@ public class TaskController {
     }
     @Operation(summary = "update a task")
     @PostMapping("/update/{taskId}")
-    public String updateTask(@Parameter(description = "Id of the task to update")@PathVariable Long taskId, @ModelAttribute Task task,Model model) {
+    public String updateTask(@Parameter(description = "Id of the task to update")@PathVariable Long taskId,@Valid @ModelAttribute Task task,Model model,BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("task", task);
+            return "update-task";
+        }
         if (task == null|| task.getTaskName() == null) {
             return "redirect:/tasks"; // or return an error view
         }
@@ -100,7 +106,6 @@ public class TaskController {
         List<Task> tasks;
         if(query != null && !query.isEmpty()) {
             tasks = taskService.searchTasks(query);
-            model.addAttribute("tasks", tasks);
         } else {
             tasks = taskService.getAllTasks();
 
