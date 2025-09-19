@@ -23,7 +23,7 @@ public class Task {
     @NotBlank(message = "Task description is required")
     @Size(min = 1000,max = 2000, message = "Task description should be between 1000 and 2000 characters long")
     @Column(length = 2000)
-    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[\\\\w\\\\s.,!?*\\\\\\\"])[a-zA-Z0-9\\s.,!?*\\\"\\-]{5,}$", message = "Task description should not contain any dummy data ")
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[\\\\w\\\\s.,!?*\\\\\\\"])[a-zA-Z0-9\\s.,!?*\\\"\\-]{5,}$", message = "Task description should only letters, numbers, spaces, and basic punctuation")
     private String taskDescription;
     @NotNull(message = "Project ID is required")
     private Long projectId; //Foreign key for project tabe

@@ -67,6 +67,9 @@ public class TaskService {
         if (taskId == null) {
             throw new InvalidTaskException("Task ID is required");
         }
+        if (taskRepository.findById(taskId).isEmpty()) {
+            throw new TaskNotFoundException("There is no task with id: " + taskId);
+        }
         taskRepository.deleteById(taskId);
 
     }
